@@ -52,4 +52,11 @@ public class Flowers {
             return "-----Out of stock-----";
         }
     }
+
+    public static void flowersInShop(Flowers[] flowersInShop) {
+        System.out.println("We have flowers in the shop: ");
+        for (int i = 0; i < flowersInShop.length; i++) {
+            System.out.println(i + 1 + ": " + flowersInShop[i].show());
+        }
+    }
 }

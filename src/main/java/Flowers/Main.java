@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         Flowers[] flowersInShop = new Flowers[]{
-                new Flowers(),
+//                new Flowers(),
                 new Flowers("Rose lux", 100, 7),
                 new Flowers("Rose standard", 70, 5),
                 new Flowers("Rose economy", 50, 11),
@@ -29,14 +29,11 @@ public class Main {
         while (shopping) {
             System.out.println("Do you want to by flowers? Type: Y/N");
             answerString = input.next();
-            if (answerString.toUpperCase().equals("Y")) {
-                System.out.println("We have flowers in the shop: ");
-                for (int i = 1; i < flowersInShop.length; i++) {
-                    System.out.println(i + ": " + flowersInShop[i].show());
-                }
+            if (answerString.equalsIgnoreCase("Y")) {
+                Flowers.flowersInShop(flowersInShop);
                 System.out.print("Please fill the number of the flower: ");
-                flowerType = Integer.parseInt(input.next());
-                if (flowerType > 0 && flowerType < 7) {
+                flowerType = Integer.parseInt(input.next()) - 1;
+                if (flowerType >= 0 && flowerType < flowersInShop.length) {
                     flowerShopQuantyty = flowersInShop[flowerType].getQuantity();
                     System.out.print("Now we have: " + flowerShopQuantyty + "pcs. " + "Please fill the quantity of the flower: ");
                     flowerQuantity = Integer.parseInt(input.next());
