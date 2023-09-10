@@ -2,16 +2,16 @@ package Flowers;
 
 public class Flowers {
     private String name;
-    private Integer length;
-    private Integer price;
-    private Integer quantity;
-    private final Integer BASE_PRICE = 100;
+    private int length;
+    private int price;
+    private int quantity;
 
     public Flowers(String name, Integer length, Integer quantity) {
+        int basePrice = 100;
         this.name = name;
         this.length = length;
         if (name.contains("Rose")) {
-            this.price = length * BASE_PRICE / 100;
+            this.price = length * basePrice / 100;
         }
         this.quantity = quantity;
     }
