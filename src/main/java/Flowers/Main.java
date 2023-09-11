@@ -27,7 +27,7 @@ public class Main {
     static boolean isNextStep = true;
 
     public static void main(String[] args) {
-        while (isNextStep) {
+        while (step != EXIT) {
             askToShopping();
             selectFlower();
             selectFlowerQuantity();
@@ -36,7 +36,7 @@ public class Main {
     }
 
     private static void askToShopping() {
-        if (isNextStep && step == START) {
+        if (step == START) {
             Scanner input = new Scanner(System.in);
             System.out.println("\nDo you want to by flowers? Type: Y/N");
             if (input.next().equalsIgnoreCase("Y")) {
@@ -49,7 +49,7 @@ public class Main {
     }
 
     private static void selectFlower() {
-        if (isNextStep && step == SELECT_FLOWER) {
+        if (step == SELECT_FLOWER) {
             Scanner input = new Scanner(System.in);
             Flowers.flowersInShop(FLOWERS_IN_SHOP);
             System.out.print("\nPlease fill the number of the flower: ");
@@ -64,7 +64,7 @@ public class Main {
     }
 
     private static void selectFlowerQuantity() {
-        if (isNextStep && step == SELECT_FLOWERS_QUANTITY) {
+        if (step == SELECT_FLOWERS_QUANTITY) {
             Scanner input = new Scanner(System.in);
             flowerShopQuantyty = FLOWERS_IN_SHOP[flowerType].getQuantity();
             System.out.print("\nNow we have: " + flowerShopQuantyty + "pcs. " + "Please fill the quantity of the flower: ");
@@ -81,7 +81,7 @@ public class Main {
     }
 
     private static void customerMoneyAnalise() {
-        if (isNextStep && step == CUSTOMER_MONEY_ANALISE) {
+        if (step == CUSTOMER_MONEY_ANALISE) {
             if (cartMoneyLeft >= 0) {
                 cartPosition++;
                 shopCart[cartPosition] = new Cart(flowerType, flowerQuantity);
