@@ -24,80 +24,76 @@ public class Main {
     static int flowerShopQuantyty;
     static int orderPrice;
     static Cart[] shopCart = new Cart[20];
+    static boolean isNextStep = true;
 
     public static void main(String[] args) {
-        while (step != EXIT) {
-            switch (step) {
-                case START: {
-                    askToShopping();
-                    break;
-                }
-                case SELECT_FLOWER: {
-                    selectFlower();
-                    break;
-                }
-                case SELECT_FLOWERS_QUANTITY: {
-                    selectFlowerQuantity();
-                    break;
-                }
-                case CUSTOMER_MONEY_ANALISE: {
-                    customerMoneyAnalise();
-                    break;
-                }
-            }
+        while (isNextStep) {
+            askToShopping();
+            selectFlower();
+            selectFlowerQuantity();
+            customerMoneyAnalise();
         }
     }
 
     private static void askToShopping() {
-        Scanner input = new Scanner(System.in);
-        System.out.println("\nDo you want to by flowers? Type: Y/N");
-        if (input.next().equalsIgnoreCase("Y")) {
-            step = SELECT_FLOWER;
-        } else {
-            step = EXIT;
+        if (isNextStep && step == START) {
+            Scanner input = new Scanner(System.in);
+            System.out.println("\nDo you want to by flowers? Type: Y/N");
+            if (input.next().equalsIgnoreCase("Y")) {
+                step = SELECT_FLOWER;
+            } else {
+                step = EXIT;
+                isNextStep = false;
+            }
         }
     }
 
     private static void selectFlower() {
-        Scanner input = new Scanner(System.in);
-        Flowers.flowersInShop(FLOWERS_IN_SHOP);
-        System.out.print("\nPlease fill the number of the flower: ");
-        flowerType = Integer.parseInt(input.next()) - 1;
-        if (flowerType >= 0 && flowerType < FLOWERS_IN_SHOP.length) {
-            step = SELECT_FLOWERS_QUANTITY;
-        } else {
-            System.out.println("\nYou typed wrong number, please try again from begin");
-            step = START;
+        if (isNextStep && step == SELECT_FLOWER) {
+            Scanner input = new Scanner(System.in);
+            Flowers.flowersInShop(FLOWERS_IN_SHOP);
+            System.out.print("\nPlease fill the number of the flower: ");
+            flowerType = Integer.parseInt(input.next()) - 1;
+            if (flowerType >= 0 && flowerType < FLOWERS_IN_SHOP.length) {
+                step = SELECT_FLOWERS_QUANTITY;
+            } else {
+                System.out.println("\nYou typed wrong number, please try again from begin");
+                step = START;
+            }
         }
     }
 
     private static void selectFlowerQuantity() {
-        Scanner input = new Scanner(System.in);
-        flowerShopQuantyty = FLOWERS_IN_SHOP[flowerType].getQuantity();
-        System.out.print("\nNow we have: " + flowerShopQuantyty + "pcs. " + "Please fill the quantity of the flower: ");
-        flowerQuantity = Integer.parseInt(input.next());
-        orderPrice = flowerQuantity * FLOWERS_IN_SHOP[flowerType].getPrice();
-        cartMoneyLeft = Cart.money - orderPrice;
-        if (flowerQuantity <= flowerShopQuantyty && flowerQuantity > 0) {
-            step = CUSTOMER_MONEY_ANALISE;
-        } else {
-            System.out.println("\nYou typed wrong quantity, please try again from begin");
-            step = START;
+        if (isNextStep && step == SELECT_FLOWERS_QUANTITY) {
+            Scanner input = new Scanner(System.in);
+            flowerShopQuantyty = FLOWERS_IN_SHOP[flowerType].getQuantity();
+            System.out.print("\nNow we have: " + flowerShopQuantyty + "pcs. " + "Please fill the quantity of the flower: ");
+            flowerQuantity = Integer.parseInt(input.next());
+            orderPrice = flowerQuantity * FLOWERS_IN_SHOP[flowerType].getPrice();
+            cartMoneyLeft = Cart.money - orderPrice;
+            if (flowerQuantity <= flowerShopQuantyty && flowerQuantity > 0) {
+                step = CUSTOMER_MONEY_ANALISE;
+            } else {
+                System.out.println("\nYou typed wrong quantity, please try again from begin");
+                step = START;
+            }
         }
     }
 
     private static void customerMoneyAnalise() {
-        if (cartMoneyLeft >= 0) {
-            cartPosition++;
-            shopCart[cartPosition] = new Cart(flowerType, flowerQuantity);
-            FLOWERS_IN_SHOP[flowerType].setQuantity(flowerShopQuantyty - flowerQuantity);
-            Cart.money = cartMoneyLeft;
-            System.out.println("\nYour bought: " + FLOWERS_IN_SHOP[shopCart[cartPosition].getFlowerType()].getName()
-                    + " " + shopCart[cartPosition].getQuantity() + "pcs. for " + orderPrice + "UAH");
-        } else {
-            System.out.println("\nYou need " + orderPrice + "UAH, but you have only " + Cart.money + "UAH");
+        if (isNextStep && step == CUSTOMER_MONEY_ANALISE) {
+            if (cartMoneyLeft >= 0) {
+                cartPosition++;
+                shopCart[cartPosition] = new Cart(flowerType, flowerQuantity);
+                FLOWERS_IN_SHOP[flowerType].setQuantity(flowerShopQuantyty - flowerQuantity);
+                Cart.money = cartMoneyLeft;
+                System.out.println("\nYour bought: " + FLOWERS_IN_SHOP[shopCart[cartPosition].getFlowerType()].getName()
+                        + " " + shopCart[cartPosition].getQuantity() + "pcs. for " + orderPrice + "UAH");
+            } else {
+                System.out.println("\nYou need " + orderPrice + "UAH, but you have only " + Cart.money + "UAH");
+            }
+            step = START;
         }
-        step = START;
     }
 
 }
