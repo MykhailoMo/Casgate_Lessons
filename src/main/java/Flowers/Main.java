@@ -16,6 +16,7 @@ public class Main {
             new Flowers("Romashka", 30, 15, 19),
             new Flowers("Chrisantema", 50, 25, 50)
     };
+    static int step = START;
     static int flowerType;
     static int flowerQuantity;
     static int cartMoneyLeft;
@@ -25,81 +26,78 @@ public class Main {
     static Cart[] shopCart = new Cart[20];
 
     public static void main(String[] args) {
-        int step = START;
         while (step != EXIT) {
             switch (step) {
                 case START: {
-                    step = askToShopping();
+                    askToShopping();
                     break;
                 }
                 case SELECT_FLOWER: {
-                    step = selectFlower();
+                    selectFlower();
                     break;
                 }
                 case SELECT_FLOWERS_QUANTITY: {
-                    step = selectFlowerQuantity();
+                    selectFlowerQuantity();
                     break;
                 }
                 case CUSTOMER_MONEY_ANALISE: {
-                    step = customerMoneyAnalise();
+                    customerMoneyAnalise();
                     break;
                 }
             }
         }
     }
 
-    private static int askToShopping() {
-        int nextStep = EXIT;
+    private static void askToShopping() {
         Scanner input = new Scanner(System.in);
-        System.out.println("Do you want to by flowers? Type: Y/N");
+        System.out.println("\nDo you want to by flowers? Type: Y/N");
         if (input.next().equalsIgnoreCase("Y")) {
-            nextStep = SELECT_FLOWER;
+            step = SELECT_FLOWER;
+        } else {
+            step = EXIT;
         }
-        return nextStep;
     }
 
-    private static int selectFlower() {
-        int nextStep = START;
+    private static void selectFlower() {
         Scanner input = new Scanner(System.in);
         Flowers.flowersInShop(FLOWERS_IN_SHOP);
-        System.out.print("Please fill the number of the flower: ");
+        System.out.print("\nPlease fill the number of the flower: ");
         flowerType = Integer.parseInt(input.next()) - 1;
         if (flowerType >= 0 && flowerType < FLOWERS_IN_SHOP.length) {
-            nextStep = SELECT_FLOWERS_QUANTITY;
+            step = SELECT_FLOWERS_QUANTITY;
         } else {
-            System.out.println("You typed wrong number, please try again from begin");
+            System.out.println("\nYou typed wrong number, please try again from begin");
+            step = START;
         }
-        return nextStep;
     }
 
-    private static int selectFlowerQuantity() {
-        int nextStep = START;
+    private static void selectFlowerQuantity() {
         Scanner input = new Scanner(System.in);
         flowerShopQuantyty = FLOWERS_IN_SHOP[flowerType].getQuantity();
-        System.out.print("Now we have: " + flowerShopQuantyty + "pcs. " + "Please fill the quantity of the flower: ");
+        System.out.print("\nNow we have: " + flowerShopQuantyty + "pcs. " + "Please fill the quantity of the flower: ");
         flowerQuantity = Integer.parseInt(input.next());
         orderPrice = flowerQuantity * FLOWERS_IN_SHOP[flowerType].getPrice();
         cartMoneyLeft = Cart.money - orderPrice;
-        if (flowerQuantity <= flowerShopQuantyty) {
-            nextStep = CUSTOMER_MONEY_ANALISE;
+        if (flowerQuantity <= flowerShopQuantyty && flowerQuantity > 0) {
+            step = CUSTOMER_MONEY_ANALISE;
         } else {
-            System.out.println("You typed wrong quantity, please try again from begin");
+            System.out.println("\nYou typed wrong quantity, please try again from begin");
+            step = START;
         }
-        return nextStep;
     }
 
-    private static int customerMoneyAnalise() {
+    private static void customerMoneyAnalise() {
         if (cartMoneyLeft >= 0) {
             cartPosition++;
             shopCart[cartPosition] = new Cart(flowerType, flowerQuantity);
             FLOWERS_IN_SHOP[flowerType].setQuantity(flowerShopQuantyty - flowerQuantity);
             Cart.money = cartMoneyLeft;
-            System.out.println("Your bought: " + FLOWERS_IN_SHOP[shopCart[cartPosition].getFlowerType()].getName()
+            System.out.println("\nYour bought: " + FLOWERS_IN_SHOP[shopCart[cartPosition].getFlowerType()].getName()
                     + " " + shopCart[cartPosition].getQuantity() + "pcs. for " + orderPrice + "UAH");
         } else {
-            System.out.println("You need " + orderPrice + "UAH, but you have only " + Cart.money + "UAH");
+            System.out.println("\nYou need " + orderPrice + "UAH, but you have only " + Cart.money + "UAH");
         }
-        return START;
+        step = START;
     }
 
 }
