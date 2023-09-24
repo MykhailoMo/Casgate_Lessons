@@ -1,5 +1,7 @@
 package Flowers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -7,7 +9,7 @@ public class Main {
     static final int START = 1;
     static final int SELECT_FLOWER = 2;
     static final int SELECT_FLOWERS_QUANTITY = 3;
-    static final int CUSTOMER_MONEY_ANALISE = 4;
+    static final int CUSTOMER_ORDER_ANALISE = 4;
     static final Flowers[] FLOWERS_IN_SHOP = new Flowers[]{
             new Flowers("Rose lux", 100, 7),
             new Flowers("Rose standard", 70, 5),
@@ -20,10 +22,9 @@ public class Main {
     static int flowerType;
     static int flowerQuantity;
     static int cartMoneyLeft;
-    static int cartPosition = 0;
     static int flowerShopQuantyty;
     static int orderPrice;
-    static Cart[] shopCart = new Cart[20];
+    static List<Cart> shopCart = new ArrayList<>();
     static boolean isNextStep = true;
 
     public static void main(String[] args) {
@@ -31,7 +32,7 @@ public class Main {
             askToShopping();
             selectFlower();
             selectFlowerQuantity();
-            customerMoneyAnalise();
+            customerOrderAnalise();
         }
     }
 
@@ -72,7 +73,7 @@ public class Main {
             orderPrice = flowerQuantity * FLOWERS_IN_SHOP[flowerType].getPrice();
             cartMoneyLeft = Cart.money - orderPrice;
             if (flowerQuantity <= flowerShopQuantyty && flowerQuantity > 0) {
-                step = CUSTOMER_MONEY_ANALISE;
+                step = CUSTOMER_ORDER_ANALISE;
             } else {
                 System.out.println("\nYou typed wrong quantity, please try again from begin");
                 step = START;
@@ -80,20 +81,51 @@ public class Main {
         }
     }
 
-    private static void customerMoneyAnalise() {
-        if (step == CUSTOMER_MONEY_ANALISE) {
+    private static void customerOrderAnalise() {
+        if (step == CUSTOMER_ORDER_ANALISE) {
             if (cartMoneyLeft >= 0) {
-                cartPosition++;
-                shopCart[cartPosition] = new Cart(flowerType, flowerQuantity);
+                customerCartUpdate(flowerType, flowerQuantity);
                 FLOWERS_IN_SHOP[flowerType].setQuantity(flowerShopQuantyty - flowerQuantity);
                 Cart.money = cartMoneyLeft;
-                System.out.println("\nYour bought: " + FLOWERS_IN_SHOP[shopCart[cartPosition].getFlowerType()].getName()
-                        + " " + shopCart[cartPosition].getQuantity() + "pcs. for " + orderPrice + "UAH");
             } else {
                 System.out.println("\nYou need " + orderPrice + "UAH, but you have only " + Cart.money + "UAH");
             }
+            customerCartShow();
             step = START;
         }
+    }
+
+    private static void customerCartUpdate(int flowerType, int flowerQuantity) {
+        boolean isUpdated = false;
+        for (Cart cart: shopCart) {
+            if (cart.getFlowerType().equals(flowerType)) {
+                isUpdated = true;
+                cart.setQuantity(cart.getQuantity() + flowerQuantity);
+                break;
+            }
+        }
+        if (!isUpdated) {
+            shopCart.add(new Cart(flowerType, flowerQuantity));
+        }
+    }
+
+    private static void customerCartShow() {
+        int quantity;
+        int price;
+        int orderSum = 0;
+        System.out.println("\n=====================================");
+        System.out.println("---------Your bought flowers---------");
+        for (Cart cart: shopCart) {
+            quantity = cart.getQuantity();
+            price = FLOWERS_IN_SHOP[cart.getFlowerType()].getPrice() * quantity;
+            orderSum = orderSum + price;
+            System.out.println(FLOWERS_IN_SHOP[cart.getFlowerType()].getName()
+                        + " " + quantity + "pcs. for "
+                        + price + "UAH");
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("Order summ: " + orderSum + "UAH");
+        System.out.println("=====================================");
     }
 
 }
