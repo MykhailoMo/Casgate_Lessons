@@ -1,4 +1,4 @@
-package Lesson_10;
+package Lesson_09;
 
 public class Reptile extends Animal implements Ability{
     private Parameter type;

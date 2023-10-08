@@ -1,4 +1,4 @@
-package Lesson_10;
+package Lesson_09;
 
 public class Animal implements Ability{
     private String name;

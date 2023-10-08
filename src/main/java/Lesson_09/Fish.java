@@ -1,4 +1,4 @@
-package Lesson_10;
+package Lesson_09;
 
 public class Fish extends Animal implements Ability{
     private Parameter colour;
