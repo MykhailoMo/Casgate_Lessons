@@ -1,13 +1,13 @@
-package Lesson_10_DB;
+package Lesson_10_DB.entities;
 
 import Lesson_10_DB.Base.ObjectWithData;
 
 import java.util.UUID;
 
 public class Result extends ObjectWithData {
-    UUID id;
-    UUID studentId;
-    UUID taskId;
+    private UUID id;
+    private UUID studentId;
+    private UUID taskId;
     boolean passed;
 
     public Result(UUID id, UUID studentId, UUID taskId, boolean passed) {
@@ -27,6 +27,10 @@ public class Result extends ObjectWithData {
 
     public boolean isPassed() {
         return passed;
+    }
+
+    public UUID getTaskId() {
+        return taskId;
     }
 
     @Override

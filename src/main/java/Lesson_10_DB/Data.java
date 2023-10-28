@@ -1,6 +1,10 @@
 package Lesson_10_DB;
 
 import Lesson_10_DB.Base.DataBaseImpl;
+import Lesson_10_DB.entities.Group;
+import Lesson_10_DB.entities.Result;
+import Lesson_10_DB.entities.Student;
+import Lesson_10_DB.entities.Task;
 
 import java.util.ArrayList;
 import java.util.List;

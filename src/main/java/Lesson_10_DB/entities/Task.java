@@ -1,4 +1,4 @@
-package Lesson_10_DB;
+package Lesson_10_DB.entities;
 
 import Lesson_10_DB.Base.ObjectWithData;
 
