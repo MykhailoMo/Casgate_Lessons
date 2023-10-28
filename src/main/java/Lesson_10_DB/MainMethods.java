@@ -1,6 +1,11 @@
 package Lesson_10_DB;
 
 import Lesson_10_DB.Base.DataBaseImpl;
+import Lesson_10_DB.entities.Group;
+import Lesson_10_DB.entities.Result;
+import Lesson_10_DB.entities.Student;
+import Lesson_10_DB.entities.Task;
+
 import java.util.*;
 
 import static Lesson_10_DB.Base.DbCollectionNames.*;
@@ -29,7 +34,7 @@ public class MainMethods {
             studentSummResult = 0;
             for (Result result: results) {
                 if (result.getStudentId().equals(studentId) && result.isPassed()) {
-                    Task task = (Task) DataBaseImpl.INSTANCE.getEntity(TASKS_DB_COLLECTION, result.taskId);
+                    Task task = (Task) DataBaseImpl.INSTANCE.getEntity(TASKS_DB_COLLECTION, result.getTaskId());
                     taskMark = task.getMark();
                     studentSummResult = studentSummResult + taskMark;
                 }
