@@ -8,24 +8,17 @@ public class Utils {
     public static final int NOT_CHANGE_DOOR = 1;
     public static final int CHANGE_DOOR = 2;
 
-    static List<Boolean> genarateThreeDoorObjects() {
+    static List<Boolean> genarateThreeDoors() {
         List<Boolean> doors = new ArrayList<>();
-        boolean isReady = false;
         for (int i = 0; i < 3; i++) {
             doors.add(false);
-            if ((randomBool() || i == 2) && !isReady) {
-                doors.set(i, true);
-                isReady = true;
-            }
-//            System.out.println("Door " + (i ) + ": " + doors.get(i));
         }
-//        System.out.println();
+        doors.set(randomInt(3), true);
         return doors;
     }
 
     static int selectFirstDoor() {
         int door = randomInt(3);
-//        System.out.println("firstDoor: " + door);
         return door;
     }
 
@@ -34,11 +27,9 @@ public class Utils {
         for (int i = 0; i < 3; i++) {
             if (i != firstDoor && !doors.get(i)) {
                 fakeDoorNumbers.add(i);
-//                System.out.println("fakeDoorNumbers: " + i);
             }
         }
         int door = fakeDoorNumbers.get(randomInt(fakeDoorNumbers.size()));
-//        System.out.println("Opened door: " + door);
         return door;
     }
 
@@ -57,7 +48,7 @@ public class Utils {
         }
     }
 
-    static void showResults(List<Boolean> results) {
+    static void showResults(List<Boolean> results, int algorythmType) {
         Integer countPositiveResults = 0;
         int countNegativeResults = 0;
         for (Boolean result: results) {
@@ -68,6 +59,11 @@ public class Utils {
             }
         }
         double percentPositiveResults = countPositiveResults.doubleValue() * 100 / (countNegativeResults + countPositiveResults);
+        if (algorythmType == NOT_CHANGE_DOOR) {
+            System.out.println("\n------Game \"Not change door\"------");
+        } else {
+            System.out.println("\n------Game \"Change door\"------");
+        }
         System.out.println("Player won the main prise: " + countPositiveResults + " times. It is: " + percentPositiveResults + "% of all tries");
     }
 
