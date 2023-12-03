@@ -1,126 +1,249 @@
 package shoppingMall;
 
-import shoppingMall.base.DataBaseImpl;
+import shoppingMall.entities.Order;
 import shoppingMall.entities.Person;
 import shoppingMall.entities.Shop;
 import shoppingMall.entities.ShopProduct;
-import shoppingMall.enums.PersonType;
+import shoppingMall.enums.Steps;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
 
 import static shoppingMall.Data.*;
 import static shoppingMall.Utils.*;
-import static shoppingMall.base.DbCollectionNames.*;
-import static shoppingMall.enums.PersonType.*;
+import static shoppingMall.enums.Steps.*;
 
 
 public class Main {
+    static Steps step = AUTHORIZATION;
+    static Scanner input = new Scanner(System.in);
 
     public static void main(String[] arg) {
-        DataBaseImpl.getInstance();
-//        createNewPerson();
-        fillPersonsAndShops();
+        dataBaseInit();
         printPersons();
-        fillProducts();
-        fillShopsWithProducts();
-//        printShops(SELLER);
-//        fillProducts();
-//       printProducts();
 
-        Person user = login();
-        UUID userId = user.getId();
-        createNewShop(userId);
-        List<Shop> shops = new ArrayList(getShopsBySeller(userId,SHOPS_DB_COLLECTION));
-        System.out.println(shops);
-        List<ShopProduct> shopProducts = getProductsByShop(shops.get(0).getId(), SHOP_PRODUCTS_DB_COLLECTION);
-        System.out.println(shopProducts);
-        addProductsToShop(shops.get(0).getId());
-        shopProducts = getProductsByShop(shops.get(0).getId(), SHOP_PRODUCTS_DB_COLLECTION);
-        System.out.println(shopProducts);
-        System.out.println(shops.get(0).getWalletAmount());
-        Scanner input = new Scanner(System.in);
-//        while (true) {
-//            switch (user.getType()) {
-//                case SELLER: {
-//                    switch (input.nextInt()) {
-//                        case 1: { //User's profile
-//                            printPersons(userId);
-//                            printShops(userId);
-//                            break;
-//                        }
-//                        case 2: {
-//                            createNewShop(userId);
-//                            printShops(userId);
-//                            break;
-//                        }
-//                        case 3: { //work with shop
-//                            printShops(userId);
-//                            UUID shopId = selectShop(userId);
-//                            while (true) {
-//                                switch (input.nextInt()) {
-//                                    case 1: {
-//                                        printShopProducts(shopId);
-//                                        break;
-//                                    }
-//                                    case 2: {
-//                                        changeShopBalance(userId);
-//                                        break;
-//                                    }
-//                                    case 3: {
-//                                        changeShopProducts(userId); //add + change (утилізація)
-//                                        printShopProducts(shopId);
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    createNewShop(user.getId());
-//                    printShops(SELLER);
-//                    break;
-//                }
-//                case CUSTOMER: {
-//                    switch (input.nextInt()) {
-//                        case 1: { //User's profile
-//                            printPersons(userId);
-//                            break;
-//                        }
-//                        case 2: { //User's shopping
-//                            printShops(CUSTOMER);
-//                            UUID shopId = selectShop(userId);
-//                            while (true) {
-//                                switch (input.nextInt()) {
-//                                    case 1: { //add to cart
-//                                        addOrderProducts(shopId, orderId);
-//                                        break;
-//                                    }
-//                                    case 2: { //User's cart
-//                                        printOrder(userId);
-//                                        break;
-//                                    }
-//                                    case 3: {
-//                                        deleteOrderProducts(orderId);
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                            break;
-//                        }
-//                        case 2: { //User's cart
-//                            printOrder(userId);
-//                            break;
-//                        }
-//                    }
-//
-//
-//                    break;
-//                }
-//            }
-//        }
+        Person person = null;
+        Shop shop = null;
+        while (true) {
+            askToAuth();
+            if (step == LOGIN) {
+                person = login();
+                step = PROFILE;
+            }
+            if (person != null) {
+                switch (person.getType()) {
+                    case CUSTOMER: {
+                        switch (step) {
+                            case PROFILE: {
+                                showPersonProfile(person);
+                                customerMenu();
+                                break;
+                            }
+                            case DEPOSIT: {
+                                addMoneyToPerson(person);
+                                step = PROFILE;
+                                break;
+                            }
+                            case VIEW_SHOP: {
+                                shop = selectShop(person);
+                                step = VIEW_SHOP_PRODUCTS;
+                                break;
+                            }
+                            case VIEW_SHOP_PRODUCTS: {
+                                List<ShopProduct> shopProducts = getProductsByShop(shop.getId());
+                                printShopProducts(shopProducts);
+                                customerMenu();
+                                break;
+                            }
+                            case SHOPPING: {
+                                Order order = createOrder(shop.getId(), person.getId());
+                                addProductsToOrder(order);
+                                customerMenu();
+                                break;
+                            }
+                            case VIEW_CART: {
+                                printCustomerCart(person.getId());
+                                customerMenu();
+                                break;
+                            }
+                            case LOGOUT: {
+                                person = null;
+                                shop = null;
+                                step = AUTHORIZATION;
+                                break;
+                            }
+                        }
+                        break;
+                    }
 
+                    case SELLER: {
+                        switch (step) {
+                            case PROFILE: {
+                                showPersonProfile(person);
+                                sellerMenu();
+                                break;
+                            }
+                            case DEPOSIT: {
+                                addMoneyToPerson(person);
+                                step = PROFILE;
+                                break;
+                            }
+                            case CREATE_SHOP: {
+                                createNewShop(person.getId());
+                                sellerMenu();
+                                break;
+                            }
+                            case VIEW_SHOP: {
+                                shop = selectShop(person);
+                                showShopProfile(shop);
+                                sellerMenu();
+                                break;
+                            }
+                            case VIEW_SHOP_PRODUCTS: {
+                                List<ShopProduct> shopProducts = getProductsByShop(shop.getId());
+                                printShopProducts(shopProducts);
+                                sellerMenu();
+                                break;
+                            }
+                            case ADD_SHOP_PRODUCTS: {
+                                addProductsToShop(shop.getId());
+                                step = VIEW_SHOP_PRODUCTS;
+                                break;
+                            }
+                            case CHANGE_SHOP_BALANCE: {
+                                changeShopBalance(shop.getId());
+                                step = VIEW_SHOP;
+                                break;
+                            }
+                            case CHANGE_SHOP_PRODUCTS: {
+                                changeShopProducts(shop.getId());
+                                step = VIEW_SHOP_PRODUCTS;
+                                break;
+                            }
+                            case LOGOUT: {
+                                person = null;
+                                shop = null;
+                                step = AUTHORIZATION;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
 
     }
+
+    private static void askToAuth() {
+        if (step == AUTHORIZATION) {
+            System.out.print("Welcome to the market:\n" +
+                    "\t1 - Login\n" +
+                    "\t2 - Register new user\n" +
+                    "Fill operation number: ");
+            if (input.next().equalsIgnoreCase("1")) {
+                step = LOGIN;
+            } else {
+                createNewPerson();
+                step = AUTHORIZATION;
+            }
+        }
+    }
+
+    private static void customerMenu() {
+        System.out.print("Possible operations:\n" +
+                "\t1 - Show Profile\n" +
+                "\t2 - Deposit To Account\n" +
+                "\t3 - View Shops And Select\n" +
+                "\t4 - View Shop Products\n" +
+                "\t5 - Add Products To Cart\n" +
+                "\t6 - View_Cart\n" +
+                "\t7 - Logout\n" +
+                "Fill operation number: ");
+        switch (input.next()) {
+            case "1": {
+                step = PROFILE;
+                break;
+            }
+            case "2": {
+                step = DEPOSIT;
+                break;
+            }
+            case "3": {
+                step = VIEW_SHOP;
+                break;
+            }
+            case "4": {
+                step = VIEW_SHOP_PRODUCTS;
+                break;
+            }
+            case "5": {
+                step = SHOPPING;
+                break;
+            }
+            case "6": {
+                step = VIEW_CART;
+                break;
+            }
+            case "7": {
+                step = LOGOUT;
+                break;
+            }
+        }
+
+    }
+
+    private static void sellerMenu() {
+        System.out.print("Possible operations:\n" +
+                "\t1 - Show Profile\n" +
+                "\t2 - Deposit To Account\n" +
+                "\t3 - Create Shop\n" +
+                "\t4 - View Shop\n" +
+                "\t5 - View Shop Products\n" +
+                "\t6 - Add Products To Shop\n" +
+                "\t7 - Change Shop Balance\n" +
+                "\t8 - Change Shop Products\n" +
+                "\t9 - Logout\n" +
+                "Fill operation number: ");
+        switch (input.next()) {
+            case "1": {
+                step = PROFILE;
+                break;
+            }
+            case "2": {
+                step = DEPOSIT;
+                break;
+            }
+            case "3": {
+                step = CREATE_SHOP;
+                break;
+            }
+            case "4": {
+                step = VIEW_SHOP;
+                break;
+            }
+            case "5": {
+                step = VIEW_SHOP_PRODUCTS;
+                break;
+            }
+            case "6": {
+                step = ADD_SHOP_PRODUCTS;
+                break;
+            }
+            case "7": {
+                step = CHANGE_SHOP_BALANCE;
+                break;
+            }
+            case "8": {
+                step = CHANGE_SHOP_PRODUCTS;
+                break;
+            }
+            case "9": {
+                step = LOGOUT;
+                break;
+            }
+        }
+
+    }
+
 }

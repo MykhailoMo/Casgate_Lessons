@@ -19,7 +19,10 @@ public class Shop extends ObjectWithData {
         this.personId = personId;
         this.name = name;
         this.type = type;
-        this.walletAmount = 10000;
+        this.walletAmount = 0;
+    }
+
+    public Shop() {
     }
 
     @Override

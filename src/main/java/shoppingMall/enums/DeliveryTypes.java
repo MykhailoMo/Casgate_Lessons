@@ -11,4 +11,8 @@ public enum DeliveryTypes {
     DeliveryTypes(int daysToDelivery) {
         this.daysToDelivery = daysToDelivery;
     }
+
+    public int getDaysToDelivery() {
+        return daysToDelivery;
+    }
 }

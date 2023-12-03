@@ -51,7 +51,7 @@ public class Data {
         }
     }
 
-    public static void fillShopsWithProducts() {
+    public static void fillProductsInShops() {
         List<Shop> shops = new ArrayList(DataBaseImpl.getInstance().getAllEntities(SHOPS_DB_COLLECTION));
         List<Products> products = Arrays.asList(Products.values());
         ShopProduct shopProduct;
@@ -61,66 +61,13 @@ public class Data {
             for (Products product : products) {
                 if (product.getShopType().equals(shopType)) {
                     shopProduct = new ShopProduct(UUID.randomUUID(), shop.getId(), product.getProduct().getId(),
-                            doubleToInt(product.getProduct().getBasePrice() * 1.2), random());
+                            product.getProduct().getName(), doubleToInt(product.getProduct().getBasePrice() * 1.2),
+                            random());
                     DataBaseImpl.getInstance().saveNewEntity(SHOP_PRODUCTS_DB_COLLECTION, shopProduct.getId(), shopProduct);
                 }
             }
         }
     }
-
-//    public static void fillShops(UUID personId, String name, ShopType type) {
-//        for (int i = 0; i < 5; i++) {
-//            String name = personNames.get(i);
-//            Person person = new Person(UUID.randomUUID(), name, name + "1", type);
-//            DataBaseImpl.INSTANCE.saveNewEntity(PERSONS_DB_COLLECTION, person.getId(), person);
-//        }
-//    }
-
-//    public static void fillGroups() {
-//        for (int i = 0; i < 3; i++) {
-//            Group group = new Group(UUID.randomUUID(), groupName.get(i));
-//            DataBaseImpl.INSTANCE.saveNewEntity(GROUPS_DB_COLLECTION, group.getId(), group);
-//        }
-//    }
-//
-//    public static void fillTasks() {
-//        for (int i = 0; i < 10; i++) {
-//            String taskName = "TS-00" + i;
-//            Task task = new Task(UUID.randomUUID(), taskName, random() + 1);
-//            DataBaseImpl.INSTANCE.saveNewEntity(TASKS_DB_COLLECTION, task.getId(), task);
-//        }
-//    }
-//
-//    public static void printStudents() {
-//        List <Student> students = new ArrayList(DataBaseImpl.INSTANCE.getAllEntities(STUDENTS_DB_COLLECTION));
-//        int i = 1;
-//        for (Student student:students) {
-//            System.out.println(i + ": " + student.toString());
-//            i++;
-//        }
-//    }
-//
-//    public static void printTasks() {
-//        List <Task> tasks = new ArrayList(DataBaseImpl.INSTANCE.getAllEntities(TASKS_DB_COLLECTION));
-//        int i = 1;
-//        int maxMark = 0;
-//        System.out.println("\nTasks---------------------");
-//        for (Task task: tasks) {
-//            System.out.println(i + ": " + task.toString());
-//            i++;
-//            maxMark = maxMark + task.getMark();
-//        }
-////        System.out.println("MaxResult = " + maxMark + ", 75% = " + (maxMark * 75 / 100) + ", 50% = " + (maxMark * 50 / 100) + ", 25% = " + (maxMark * 25 / 100));
-//    }
-//    public static void printResults() {
-//        List <Result> results = new ArrayList(DataBaseImpl.INSTANCE.getAllEntities(RESULTS_DB_COLLECTION));
-//        int i = 1;
-//        System.out.println("----*************************");
-//        for (Result result:results) {
-//            System.out.println(i + ": " + result.toString());
-//            i++;
-//        }
-//    }
 
     static int random() {
         double data = Math.random() * 9;
@@ -130,4 +77,12 @@ public class Data {
     public static int doubleToInt(double data) {
         return Math.toIntExact(Math.round(data));
     }
+
+    public static void dataBaseInit() {
+        DataBaseImpl.getInstance();
+        fillPersonsAndShops();
+        fillProducts();
+        fillProductsInShops();
+    }
+
 }

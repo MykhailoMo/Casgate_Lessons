@@ -10,13 +10,15 @@ public class ShopProduct extends ObjectWithData {
     private UUID id;
     private UUID shopId;
     private UUID productId;
+    private String name;
     private int price;
     private int quantity;
 
-    public ShopProduct(UUID id, UUID shopId, UUID productId, int price, int quantity) {
+    public ShopProduct(UUID id, UUID shopId, UUID productId, String name, int price, int quantity) {
         this.id = id;
         this.shopId = shopId;
         this.productId = productId;
+        this.name = name;
         this.price = price;
         this.quantity = quantity;
     }
@@ -24,9 +26,7 @@ public class ShopProduct extends ObjectWithData {
     @Override
     public String toString() {
         return "ShopProduct{" +
-                "id=" + id +
-                ", shopId=" + shopId +
-                ", productId=" + productId +
+                "name=" + name +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 "}\n";

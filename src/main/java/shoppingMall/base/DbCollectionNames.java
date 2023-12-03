@@ -2,8 +2,6 @@ package shoppingMall.base;
 
 public enum DbCollectionNames {
 
-    CUSTOMERS_DB_COLECTON("customers"),
-    SELLERS_DB_COLLECTION("sellers"),
     PERSONS_DB_COLLECTION("persons"),
     SHOPS_DB_COLLECTION("shops"),
     PRODUCTS_DB_COLLECTION("products"),

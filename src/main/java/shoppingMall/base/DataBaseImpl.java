@@ -82,8 +82,6 @@ public class DataBaseImpl implements DataBase {
     }
 
     private void loadDataCollections() {
-        data.put(DbCollectionNames.CUSTOMERS_DB_COLECTON, new HashMap<>());
-        data.put(DbCollectionNames.SELLERS_DB_COLLECTION, new HashMap<>());
         data.put(DbCollectionNames.PERSONS_DB_COLLECTION, new HashMap<>());
         data.put(DbCollectionNames.SHOPS_DB_COLLECTION, new HashMap<>());
         data.put(DbCollectionNames.PRODUCTS_DB_COLLECTION, new HashMap<>());
