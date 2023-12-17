@@ -5,38 +5,46 @@ import shoppingMall.entities.Person;
 import shoppingMall.entities.Shop;
 import shoppingMall.entities.ShopProduct;
 import shoppingMall.enums.Steps;
+import shoppingMall.utils.ChangeShopProducts;
+import shoppingMall.utils.DataOutput;
+import shoppingMall.utils.GetData;
 
 import java.util.List;
 import java.util.Scanner;
 
-import static shoppingMall.Data.*;
-import static shoppingMall.Utils.*;
+import static shoppingMall.utils.AddProducts.*;
+import static shoppingMall.utils.InitialDataSetup.*;
+import static shoppingMall.utils.MainMethods.*;
 import static shoppingMall.enums.Steps.*;
 
 
 public class Main {
     static Steps step = AUTHORIZATION;
     static Scanner input = new Scanner(System.in);
+    static Shop shop = null;
 
     public static void main(String[] arg) {
         dataBaseInit();
-        printPersons();
-
+        DataOutput.printPersons();
         Person person = null;
-        Shop shop = null;
+
         while (true) {
             askToAuth();
             if (step == LOGIN) {
                 person = login();
-                step = PROFILE;
+                if (person != null) {
+                    step = PROFILE;
+                } else {
+                    step = AUTHORIZATION;
+                }
             }
             if (person != null) {
                 switch (person.getType()) {
                     case CUSTOMER: {
                         switch (step) {
                             case PROFILE: {
-                                showPersonProfile(person);
-                                customerMenu();
+                                DataOutput.showProfile(person);
+                                step = MENU;
                                 break;
                             }
                             case DEPOSIT: {
@@ -46,30 +54,38 @@ public class Main {
                             }
                             case VIEW_SHOP: {
                                 shop = selectShop(person);
-                                step = VIEW_SHOP_PRODUCTS;
+                                if (shop != null) {
+                                    step = VIEW_SHOP_PRODUCTS;
+                                } else {
+                                    step = MENU;
+                                }
                                 break;
                             }
                             case VIEW_SHOP_PRODUCTS: {
-                                List<ShopProduct> shopProducts = getProductsByShop(shop.getId());
-                                printShopProducts(shopProducts);
-                                customerMenu();
+                                List<ShopProduct> shopProducts = GetData.getProductsByShop(shop.getId());
+                                DataOutput.printShopProducts(shopProducts);
+                                step = MENU;
                                 break;
                             }
                             case SHOPPING: {
                                 Order order = createOrder(shop.getId(), person.getId());
-                                addProductsToOrder(order);
-                                customerMenu();
+                                addProductToOrder(order);
+                                step = MENU;
                                 break;
                             }
                             case VIEW_CART: {
-                                printCustomerCart(person.getId());
-                                customerMenu();
+                                DataOutput.printCustomerCart(person.getId());
+                                step = MENU;
                                 break;
                             }
                             case LOGOUT: {
                                 person = null;
                                 shop = null;
                                 step = AUTHORIZATION;
+                                break;
+                            }
+                            case MENU: {
+                                customerMenu();
                                 break;
                             }
                         }
@@ -79,8 +95,8 @@ public class Main {
                     case SELLER: {
                         switch (step) {
                             case PROFILE: {
-                                showPersonProfile(person);
-                                sellerMenu();
+                                DataOutput.showProfile(person);
+                                step = MENU;
                                 break;
                             }
                             case DEPOSIT: {
@@ -90,19 +106,21 @@ public class Main {
                             }
                             case CREATE_SHOP: {
                                 createNewShop(person.getId());
-                                sellerMenu();
+                                step = MENU;
                                 break;
                             }
                             case VIEW_SHOP: {
                                 shop = selectShop(person);
-                                showShopProfile(shop);
-                                sellerMenu();
+                                if (shop != null) {
+                                    DataOutput.showProfile(shop);
+                                }
+                                step = MENU;
                                 break;
                             }
                             case VIEW_SHOP_PRODUCTS: {
-                                List<ShopProduct> shopProducts = getProductsByShop(shop.getId());
-                                printShopProducts(shopProducts);
-                                sellerMenu();
+                                List<ShopProduct> shopProducts = GetData.getProductsByShop(shop.getId());
+                                DataOutput.printShopProducts(shopProducts);
+                                step = MENU;
                                 break;
                             }
                             case ADD_SHOP_PRODUCTS: {
@@ -112,11 +130,12 @@ public class Main {
                             }
                             case CHANGE_SHOP_BALANCE: {
                                 changeShopBalance(shop.getId());
-                                step = VIEW_SHOP;
+                                DataOutput.showProfile(shop);
+                                step = MENU;
                                 break;
                             }
                             case CHANGE_SHOP_PRODUCTS: {
-                                changeShopProducts(shop.getId());
+                                ChangeShopProducts.changeShopProducts(shop.getId());
                                 step = VIEW_SHOP_PRODUCTS;
                                 break;
                             }
@@ -124,6 +143,10 @@ public class Main {
                                 person = null;
                                 shop = null;
                                 step = AUTHORIZATION;
+                                break;
+                            }
+                            case MENU: {
+                                sellerMenu();
                                 break;
                             }
                         }
@@ -137,21 +160,32 @@ public class Main {
 
     private static void askToAuth() {
         if (step == AUTHORIZATION) {
-            System.out.print("Welcome to the market:\n" +
+            System.out.print("---------------------------------------\n" +
+                    "Welcome to the market:\n" +
                     "\t1 - Login\n" +
                     "\t2 - Register new user\n" +
                     "Fill operation number: ");
-            if (input.next().equalsIgnoreCase("1")) {
-                step = LOGIN;
-            } else {
-                createNewPerson();
-                step = AUTHORIZATION;
+            switch (input.next()) {
+                case "1": {
+                    step = LOGIN;
+                    break;
+                }
+                case "2": {
+                    createNewPerson();
+                    step = AUTHORIZATION;
+                    break;
+                }
+                default: {
+                    System.out.println("You typed wrong operation, try again");
+                    break;
+                }
             }
         }
     }
 
     private static void customerMenu() {
-        System.out.print("Possible operations:\n" +
+        System.out.print("---------------------------------------\n" +
+                "Possible operations:\n" +
                 "\t1 - Show Profile\n" +
                 "\t2 - Deposit To Account\n" +
                 "\t3 - View Shops And Select\n" +
@@ -174,11 +208,15 @@ public class Main {
                 break;
             }
             case "4": {
-                step = VIEW_SHOP_PRODUCTS;
+                if (isShopSelected(shop)) {
+                    step = VIEW_SHOP_PRODUCTS;
+                }
                 break;
             }
             case "5": {
-                step = SHOPPING;
+                if (isShopSelected(shop)) {
+                    step = SHOPPING;
+                }
                 break;
             }
             case "6": {
@@ -189,12 +227,18 @@ public class Main {
                 step = LOGOUT;
                 break;
             }
+            default: {
+                System.out.println("You typed wrong operation, try again");
+                break;
+            }
         }
 
     }
 
+
     private static void sellerMenu() {
-        System.out.print("Possible operations:\n" +
+        System.out.print("---------------------------------------\n" +
+                "Possible operations:\n" +
                 "\t1 - Show Profile\n" +
                 "\t2 - Deposit To Account\n" +
                 "\t3 - Create Shop\n" +
@@ -223,23 +267,35 @@ public class Main {
                 break;
             }
             case "5": {
-                step = VIEW_SHOP_PRODUCTS;
+                if (isShopSelected(shop)) {
+                    step = VIEW_SHOP_PRODUCTS;
+                }
                 break;
             }
             case "6": {
-                step = ADD_SHOP_PRODUCTS;
+                if (isShopSelected(shop)) {
+                    step = ADD_SHOP_PRODUCTS;
+                }
                 break;
             }
             case "7": {
-                step = CHANGE_SHOP_BALANCE;
+                if (isShopSelected(shop)) {
+                    step = CHANGE_SHOP_BALANCE;
+                }
                 break;
             }
             case "8": {
-                step = CHANGE_SHOP_PRODUCTS;
+                if (isShopSelected(shop)) {
+                    step = CHANGE_SHOP_PRODUCTS;
+                }
                 break;
             }
             case "9": {
                 step = LOGOUT;
+                break;
+            }
+            default: {
+                System.out.println("You typed wrong operation, try again");
                 break;
             }
         }

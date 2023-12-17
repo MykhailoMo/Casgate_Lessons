@@ -19,7 +19,7 @@ public class Product extends ObjectWithData {
 
     @Override
     public String toString() {
-        return "\nProduct{" +
+        return "Product{" +
                  id +
                 ", " + name + '\'' +
                 ", " + basePrice + "UAH" +

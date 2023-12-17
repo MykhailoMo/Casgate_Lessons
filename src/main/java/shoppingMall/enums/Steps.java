@@ -13,7 +13,8 @@ public enum Steps {
     CHANGE_SHOP_PRODUCTS,
     LOGOUT,
     SHOPPING,
-    VIEW_CART;
+    VIEW_CART,
+    MENU;
 
     private String step;
 

@@ -22,16 +22,11 @@ public class Shop extends ObjectWithData {
         this.walletAmount = 0;
     }
 
-    public Shop() {
-    }
-
     @Override
     public String toString() {
-        return "\nShop{" +
-                 id +
-                ", ownerId = " + personId +
-                ", " + name +
-                ", " + type +
+        return "Shop{" +
+                name +
+                ", " + type.getGoodsName() +
                 ", " + walletAmount + "UAH" +
                 "}";
     }

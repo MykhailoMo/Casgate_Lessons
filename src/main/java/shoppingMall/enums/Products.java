@@ -22,7 +22,7 @@ public enum Products {
     BALKA(new Product(UUID.randomUUID(), "Balka", 456), BUILDING_MATERIALS),
     DROVA(new Product(UUID.randomUUID(), "Drova", 1000), BUILDING_MATERIALS),
     KOSHYK(new Product(UUID.randomUUID(), "Koshyk", 80), HOUSEHOLD),
-    VIDRO(new Product(UUID.randomUUID(), "Vidro", 25000), HOUSEHOLD),
+    VIDRO(new Product(UUID.randomUUID(), "Vidro", 250), HOUSEHOLD),
     TARILKA(new Product(UUID.randomUUID(), "Tarilka", 35), HOUSEHOLD),
     VYDELKA(new Product(UUID.randomUUID(), "Vydelka", 145), HOUSEHOLD);
 

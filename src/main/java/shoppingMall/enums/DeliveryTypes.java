@@ -15,4 +15,5 @@ public enum DeliveryTypes {
     public int getDaysToDelivery() {
         return daysToDelivery;
     }
+
 }
